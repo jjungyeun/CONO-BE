@@ -3,6 +3,7 @@ package com.wonjung.cono.controller
 import com.wonjung.cono.dto.req.ConoCreateReqDto
 import com.wonjung.cono.dto.res.ConoResDto
 import com.wonjung.cono.service.ConoService
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -37,7 +38,7 @@ class ConoController(
      */
     @PostMapping
     fun createCono(
-        @RequestBody createDto: ConoCreateReqDto
+        @RequestBody @Valid createDto: ConoCreateReqDto
     ) : ResponseEntity<Long> {
         val newConoId: Long = conoService.createCono(createDto)
         return ResponseEntity.created(URI.create(newConoId.toString())).build()
