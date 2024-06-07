@@ -1,5 +1,6 @@
 package com.wonjung.cono.dto.req
 
+import com.wonjung.cono.annotation.NullOrNotBlank
 import com.wonjung.cono.dto.SnakeCaseDto
 import com.wonjung.cono.type.FeeUnit
 import com.wonjung.cono.type.MicType
@@ -21,7 +22,7 @@ data class ConoCreateReqDto (
     val address: String,
     @field:NotNull @field:Valid
     val location: LocationReqDto,
-    @field:Size(max = 255)
+    @field:NullOrNotBlank @field:Size(max = 255)
     val operatingTime: String?,
     @field:Pattern(regexp = "^\\d{2,4}-\\d{3,4}-\\d{4}$")
     val phoneNumber: String?,
