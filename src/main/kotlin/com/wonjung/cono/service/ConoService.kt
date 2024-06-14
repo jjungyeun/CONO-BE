@@ -1,7 +1,9 @@
 package com.wonjung.cono.service
 
 import com.wonjung.cono.dto.req.ConoCreateReqDto
+import com.wonjung.cono.dto.res.ConoDetailResDto
 import com.wonjung.cono.dto.res.ConoResDto
+import com.wonjung.cono.dto.res.LocationResDto
 import com.wonjung.cono.entity.AddressInfo
 import com.wonjung.cono.entity.Cono
 import com.wonjung.cono.entity.Fee
@@ -9,6 +11,7 @@ import com.wonjung.cono.entity.Mic
 import com.wonjung.cono.repo.ConoRepository
 import com.wonjung.cono.repo.FeeRepository
 import com.wonjung.cono.repo.MicRepository
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 interface ConoService {
     fun getConoList(query: String, pageable: Pageable): Page<ConoResDto>
     fun createCono(createDto: ConoCreateReqDto): Long
+    fun getConoDetail(conoId: Long): ConoDetailResDto
 }
 
 @Service
@@ -71,5 +75,49 @@ class ConoServiceImpl(
         }
 
         return cono.id
+    }
+
+    override fun getConoDetail(conoId: Long): ConoDetailResDto {
+        val resDto: ConoDetailResDto
+
+        val cono = conoRepository.findById(conoId)
+            .orElseThrow { NotFoundException() } // TODO: custom Exception 추가
+            .also {
+                resDto = ConoDetailResDto(
+                    id = conoId,
+                    name = it.name,
+                    address = it.addressInfo.address,
+                    location = LocationResDto(it.addressInfo.latitude, it.addressInfo.longitude),
+                    operatingTime = it.operatingTime,
+                    phoneNumber = it.phoneNumber,
+                    payTypes = it.payTypesToString(),
+                    roomCount = it.roomCount,
+                    os = it.os?.value,
+                    hasScoreBonus = it.hasScoreBonus,
+                    canControlSound = it.canControlSound,
+                    hasMoneyChanger = it.hasMoneyChanger
+                )
+            }
+
+        micRepository.findAllByCono(cono)
+            .map { it.micType.value }
+            .also { list ->
+                if (list.isNotEmpty()) {
+                    resDto.micTypes = list.joinToString(", ")
+                }
+            }
+
+        feeRepository.findAllByCono(cono)
+            .sortedWith(compareBy({ it.unit }, { it.price }))
+            .map {
+                it.feeToString()
+            }
+            .also { list ->
+                if (list.isNotEmpty()) {
+                    resDto.fee = list.joinToString(",\n")
+                }
+            }
+
+        return resDto
     }
 }

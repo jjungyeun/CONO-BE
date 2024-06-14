@@ -73,6 +73,11 @@ class Cono(
         }.toSet()
     }
 
+    fun payTypesToString(): String? {
+        if (payTypes.isNullOrBlank()) return null
+        return getPayTypes().joinToString(", ") { it.value }
+    }
+
     /**
      * Setters
      */
