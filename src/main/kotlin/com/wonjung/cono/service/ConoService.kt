@@ -90,9 +90,9 @@ class ConoServiceImpl(
                     location = LocationResDto(it.addressInfo.latitude, it.addressInfo.longitude),
                     operatingTime = it.operatingTime,
                     phoneNumber = it.phoneNumber,
-                    payTypes = it.getPayTypes(),
+                    payTypes = it.payTypesToString(),
                     roomCount = it.roomCount,
-                    os = it.os,
+                    os = it.os?.value,
                     hasScoreBonus = it.hasScoreBonus,
                     canControlSound = it.canControlSound,
                     hasMoneyChanger = it.hasMoneyChanger
@@ -100,8 +100,11 @@ class ConoServiceImpl(
             }
 
         micRepository.findAllByCono(cono)
-            .forEach {
-                resDto.micTypes.add(it.micType)
+            .map { it.micType.value }
+            .also { list ->
+                if (list.isNotEmpty()) {
+                    resDto.micTypes = list.joinToString(", ")
+                }
             }
 
         feeRepository.findAllByCono(cono)
