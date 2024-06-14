@@ -25,4 +25,18 @@ class Fee(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     val unit: FeeUnit = unit
+
+
+    /**
+     * methods
+     */
+
+    fun feeToString(): String {
+        return StringBuilder()
+            .append(price)
+            .append("원에 ")
+            .append(feeValue)
+            .append(unit.value)
+            .toString()
+    }
 }
