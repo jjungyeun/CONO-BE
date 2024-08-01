@@ -85,6 +85,7 @@ class ConoServiceImpl(
             .also {
                 resDto = ConoDetailResDto(
                     id = conoId,
+                    updatedDate = it.updatedDatetime.toLocalDate(),
                     name = it.name,
                     address = it.addressInfo.address,
                     location = LocationResDto(it.addressInfo.latitude, it.addressInfo.longitude),

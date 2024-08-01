@@ -2,6 +2,7 @@ package com.wonjung.cono.dto.res
 
 import com.wonjung.cono.dto.SnakeCaseDto
 import java.math.BigDecimal
+import java.time.LocalDate
 
 data class ConoResDto (
     val id: Long,
@@ -11,6 +12,7 @@ data class ConoResDto (
 
 data class ConoDetailResDto(
     val id: Long,
+    var updatedDate: LocalDate,
     var name: String,
     var address: String,
     var location: LocationResDto,

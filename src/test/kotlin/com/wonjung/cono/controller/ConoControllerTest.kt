@@ -148,6 +148,7 @@ class ConoControllerTest(
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(cono.id))
+            .andExpect(jsonPath("$.updated_date").value(cono.updatedDatetime.toLocalDate().toString()))
             .andExpect(jsonPath("$.name").value(conoName))
             .andExpect(jsonPath("$.address").value(conoAddress))
             .andExpect(jsonPath("$.location.lan").value(lan))
